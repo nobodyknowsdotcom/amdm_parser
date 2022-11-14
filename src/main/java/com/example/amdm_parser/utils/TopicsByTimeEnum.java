@@ -3,7 +3,7 @@ package com.example.amdm_parser.utils;
 import lombok.Getter;
 
 @Getter
-public enum TopicEnum {
+public enum TopicsByTimeEnum {
     TODAY ("https://amdm.ru/akkordi/popular/"),
     WEEK ("https://amdm.ru/akkordi/popular/week"),
     MONTH ("https://amdm.ru/akkordi/popular/month"),
@@ -11,7 +11,7 @@ public enum TopicEnum {
 
     private final String url;
 
-    TopicEnum(String link) {
+    TopicsByTimeEnum(String link) {
         this.url = link;
     }
 
