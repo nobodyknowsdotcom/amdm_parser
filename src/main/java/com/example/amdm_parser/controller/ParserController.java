@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 @RestController
 public class ParserController {
@@ -20,7 +19,7 @@ public class ParserController {
 
     @GetMapping("/{topic_type}")
     public ArrayList<Song> getSongsList(@PathVariable String topic_type){
-        String topicUrl = TopicsByTimeEnum.valueOf(topic_type.toUpperCase(Locale.ROOT)).toString();
+        String topicUrl = TopicsByTimeEnum.valueOf(topic_type.toUpperCase()).toString();
         return parserService.getSongsList(topicUrl);
     }
 }
