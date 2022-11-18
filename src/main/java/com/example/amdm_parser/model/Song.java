@@ -11,4 +11,5 @@ public class Song {
     private final String name;
     private final String artist;
     private final String url;
+    private final int position;
 }

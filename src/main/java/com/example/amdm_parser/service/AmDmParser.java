@@ -6,7 +6,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -15,11 +14,13 @@ import java.util.ArrayList;
 @Slf4j
 @Service
 public class AmDmParser {
-    @Cacheable(value = "Songs", key = "#url")
     public ArrayList<Song> getSongsList(String url){
         Document page = getPage(url);
         Element songsContainer = getSongsContainer(page);
-        return getSongsListFromContainer(songsContainer);
+        ArrayList<Song> songs = getSongsListFromContainer(songsContainer);
+
+        log.info(String.format("Got %s songs by %s url", songs.size(), url));
+        return songs;
     }
 
     private Document getPage(String url){
@@ -39,26 +40,28 @@ public class AmDmParser {
         return page.select("table.items").first();
     }
 
-    private ArrayList<Song> getSongsListFromContainer(Element container){
+    private ArrayList<Song> getSongsListFromContainer(Element parentContainer){
         ArrayList<Song> result = new ArrayList<>();
-        Elements songElements = container.select("td.artist_name");
+        Elements songElements = parentContainer.select("td.artist_name");
         log.info("Exacting songs from parent container...");
 
-        for(Element songElement : songElements){
+        for(int i=0; i<songElements.size(); i++){
             try {
-                result.add(parseElementIntoSong(songElement));
+                Song parsedSong = parseElementIntoSong(songElements.get(i), i);
+                result.add(parsedSong);
             }
             catch (Exception e){
                 log.error("Can't parse song!");
+                e.printStackTrace();
             }
         }
         return result;
     }
 
-    private Song parseElementIntoSong(Element songElement){
+    private Song parseElementIntoSong(Element songElement, int index){
         String name = songElement.select("a.artist").get(1).text();
         String artist = songElement.select("a.artist").get(0).text();
         String url = songElement.select("a.artist").get(1).attr("href");
-        return new Song(name, artist, url);
+        return new Song(name, artist, url, index + 1);
     }
 }
