@@ -15,7 +15,7 @@ public class CacheRefresher {
         this.cacheManager = cacheManager;
     }
 
-    @Scheduled(cron = "0 5 4 * * ?",zone = "GMT+5")
+    @Scheduled(cron = "0 5 2 * * ?",zone = "GMT+5")
     @CacheEvict(value = "Songs", allEntries = true)
     public void clearCache() {
         cacheManager.getCache("Songs").clear();
