@@ -1,6 +1,6 @@
 package com.example.amdm_parser.service;
 
-import com.example.amdm_parser.model.Song;
+import com.example.amdm_parser.dto.Song;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,7 +19,7 @@ public class AmDmParser {
         Element songsContainer = getSongsContainer(page);
         ArrayList<Song> songs = getSongsListFromContainer(songsContainer);
 
-        log.info(String.format("Got %s songs by %s url", songs.size(), url));
+        log.info(String.format("Got %s songs by %s", songs.size(), url));
         return songs;
     }
 

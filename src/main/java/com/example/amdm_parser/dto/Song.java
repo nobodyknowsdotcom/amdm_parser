@@ -1,4 +1,4 @@
-package com.example.amdm_parser.model;
+package com.example.amdm_parser.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
