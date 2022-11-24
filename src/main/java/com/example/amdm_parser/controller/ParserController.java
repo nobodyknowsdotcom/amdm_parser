@@ -19,7 +19,7 @@ public class ParserController {
 
     @GetMapping("/{topic_type}")
     public ArrayList<Song> getSongsList(@PathVariable String topic_type){
-        String topicUrl = TopicCategories.valueOf(topic_type.toUpperCase()).toString();
-        return parserService.getSongsList(topicUrl);
+        TopicCategories category = TopicCategories.valueOf(topic_type.toUpperCase());
+        return parserService.getSongsByCategory(category);
     }
 }

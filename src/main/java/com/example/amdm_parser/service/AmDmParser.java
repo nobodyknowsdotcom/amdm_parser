@@ -1,11 +1,13 @@
 package com.example.amdm_parser.service;
 
 import com.example.amdm_parser.dto.Song;
+import com.example.amdm_parser.utils.TopicCategories;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.jsoup.select.Selector;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -14,25 +16,42 @@ import java.util.ArrayList;
 @Slf4j
 @Service
 public class AmDmParser {
-    public ArrayList<Song> getSongsList(String url){
-        Document page = getPage(url);
-        Element songsContainer = getSongsContainer(page);
-        ArrayList<Song> songs = getSongsListFromContainer(songsContainer);
+    public ArrayList<Song> getSongsByCategory(TopicCategories category){
+        ArrayList<Song> songsList = new ArrayList<>();
+        Document firstPage = getPage(category.getUrl());
+        int pagesCount = getPagesCount(firstPage);
 
-        log.info(String.format("Got %s songs by %s", songs.size(), url));
-        return songs;
+        for (int i = 0; i < pagesCount; i++) {
+            Document page = getPage(category.getUrl()+String.format("/page%s", i+1));
+            Element songsContainer = getSongsContainer(page);
+            songsList.addAll(getSongsListFromContainer(songsContainer));
+        }
+
+        log.info(String.format("Got %s songs by %s, pages count: %s", songsList.size(),
+                category.getUrl(), pagesCount));
+        return songsList;
     }
 
     private Document getPage(String url){
         Document page = new Document(url);
         try {
-            page = Jsoup.connect(url).timeout(5*1000).get();
+            page = Jsoup.connect(url).timeout(2*1000).get();
             log.info(String.format("Getting %s...", url));
             return page;
         } catch (IOException e) {
             log.error(String.format("Can't get %s", url));
         }
         return page;
+    }
+
+    private int getPagesCount(Document page){
+        try{
+            Element pagination = page.select("ul.nav-pages").first();
+            return pagination.select("li").size();
+        }
+        catch (Selector.SelectorParseException e){
+            return 1;
+        }
     }
 
     private Element getSongsContainer(Document page){
@@ -50,7 +69,7 @@ public class AmDmParser {
                 Song parsedSong = parseElementIntoSong(songElements.get(i), i);
                 result.add(parsedSong);
             }
-            catch (Exception e){
+            catch (Selector.SelectorParseException e){
                 log.error("Can't parse song!");
                 e.printStackTrace();
             }

@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum TopicCategories {
-    TODAY ("https://amdm.ru/akkordi/popular/"),
+    TODAY ("https://amdm.ru/akkordi/popular"),
     WEEK ("https://amdm.ru/akkordi/popular/week"),
     MONTH ("https://amdm.ru/akkordi/popular/month"),
     ALL ("https://amdm.ru/akkordi/popular/all");
