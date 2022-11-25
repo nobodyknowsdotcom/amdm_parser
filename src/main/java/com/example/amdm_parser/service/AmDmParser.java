@@ -19,8 +19,17 @@ public class AmDmParser {
     public ArrayList<Song> getSongsByCategory(TopicCategories category){
         ArrayList<Song> songsList = new ArrayList<>();
         Document firstPage = getPage(category.getUrl());
-        int pagesCount = getPagesCount(firstPage);
 
+        int pagesCount = 1;
+        try{
+            pagesCount = getPagesCount(firstPage);
+        }
+        catch (NullPointerException ignored){}
+
+
+        /*
+        Бежим по всем страницам, парсим их и складываем песни в songList
+        */
         for (int i = 0; i < pagesCount; i++) {
             Document page = getPage(category.getUrl()+String.format("/page%s", i+1));
             Element songsContainer = getSongsContainer(page);
@@ -32,6 +41,9 @@ public class AmDmParser {
         return songsList;
     }
 
+    /*
+    * Скачивает html страницу по указанной ссылке и отдает как Document
+    */
     private Document getPage(String url){
         Document page = new Document(url);
         try {
@@ -53,12 +65,16 @@ public class AmDmParser {
             return 1;
         }
     }
-
+    /*
+    * Вытаскивает элемент-родитель, в котором лежит весь список песен
+    */
     private Element getSongsContainer(Document page){
         log.info("Exacting parent container...");
         return page.select("table.items").first();
     }
-
+    /*
+    * Вытаскивает из элемента-родителя весь список песен и возвращает как ArrayList
+    */
     private ArrayList<Song> getSongsListFromContainer(Element parentContainer){
         ArrayList<Song> result = new ArrayList<>();
         Elements songElements = parentContainer.select("td.artist_name");
@@ -76,7 +92,9 @@ public class AmDmParser {
         }
         return result;
     }
-
+    /*
+    * Преобразует элемент из родительского элемента с песнями в экземпляр класса Song
+    */
     private Song parseElementIntoSong(Element songElement, int index){
         String name = songElement.select("a.artist").get(1).text();
         String artist = songElement.select("a.artist").get(0).text();
