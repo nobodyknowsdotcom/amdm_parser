@@ -2,7 +2,6 @@ package com.example.amdm_parser.controller;
 
 import com.example.amdm_parser.dto.Song;
 import com.example.amdm_parser.repository.SongsTopicRepository;
-import com.example.amdm_parser.service.SongTopicSaver;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -13,17 +12,9 @@ import java.util.ArrayList;
 @RestController
 public class ParserController {
     private final SongsTopicRepository repo;
-    private final SongTopicSaver topicSaverService;
 
-    public ParserController(SongsTopicRepository repo, SongTopicSaver topicSaverService) {
+    public ParserController(SongsTopicRepository repo) {
         this.repo = repo;
-        this.topicSaverService = topicSaverService;
-    }
-
-    @PostMapping("/updateRepository")
-    public String updateRepository(){
-        topicSaverService.saveAllTopicsToRepository();
-        return "Ok!";
     }
 
     @GetMapping("/{topicType}")

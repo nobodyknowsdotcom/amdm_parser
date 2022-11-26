@@ -2,7 +2,8 @@ server:
   port: '8050'
 
 parser:
-  songsOnPage:  '50'
+  songsOnPage: '50'
+  schedulerConfig: 30 0 2,12 * * *
 
 spring:
   datasource:
@@ -16,7 +17,7 @@ spring:
         database-platform: org.hibernate.dialect.H2Dialect
         properties:
           hibernate:
-            check_nullability=true
+            check_nullability: true
 
 springdoc:
   swagger-ui:
