@@ -8,14 +8,19 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
 @Slf4j
 @Service
 public class AmDmParser {
+    @Value("${parser.songsOnPage}")
+    private int songsOnPage;
+
     public ArrayList<Song> getSongsByCategory(TopicCategories category){
         ArrayList<Song> songsList = new ArrayList<>();
         Document firstPage = getPage(category.getUrl());
@@ -25,15 +30,13 @@ public class AmDmParser {
             pagesCount = getPagesCount(firstPage);
         }
         catch (NullPointerException ignored){}
-
-
         /*
         Бежим по всем страницам, парсим их и складываем песни в songList
         */
         for (int i = 0; i < pagesCount; i++) {
             Document page = getPage(category.getUrl()+String.format("/page%s", i+1));
             Element songsContainer = getSongsContainer(page);
-            songsList.addAll(getSongsListFromContainer(songsContainer));
+            songsList.addAll(getSongsListFromContainer(songsContainer, i, category));
         }
 
         log.info(String.format("Got %s songs by %s, pages count: %s", songsList.size(),
@@ -69,20 +72,19 @@ public class AmDmParser {
     * Вытаскивает элемент-родитель, в котором лежит весь список песен
     */
     private Element getSongsContainer(Document page){
-        log.info("Exacting parent container...");
         return page.select("table.items").first();
     }
     /*
     * Вытаскивает из элемента-родителя весь список песен и возвращает как ArrayList
     */
-    private ArrayList<Song> getSongsListFromContainer(Element parentContainer){
+    private ArrayList<Song> getSongsListFromContainer(Element parentContainer, int page, TopicCategories category){
         ArrayList<Song> result = new ArrayList<>();
         Elements songElements = parentContainer.select("td.artist_name");
-        log.info("Exacting songs from parent container...");
 
         for(int i=0; i<songElements.size(); i++){
-            try {
-                Song parsedSong = parseElementIntoSong(songElements.get(i), i);
+            try { // Передаем в метод Element (будущий Song), место в списке и категорию
+                int songIndex = (page*songsOnPage)+i;
+                Song parsedSong = parseElementIntoSong(songElements.get(i), songIndex, category);
                 result.add(parsedSong);
             }
             catch (Selector.SelectorParseException e){
@@ -95,10 +97,11 @@ public class AmDmParser {
     /*
     * Преобразует элемент из родительского элемента с песнями в экземпляр класса Song
     */
-    private Song parseElementIntoSong(Element songElement, int index){
+    private Song parseElementIntoSong(Element songElement, int index, TopicCategories category){
         String name = songElement.select("a.artist").get(1).text();
         String artist = songElement.select("a.artist").get(0).text();
         String url = songElement.select("a.artist").get(1).attr("href");
-        return new Song(name, artist, url, index + 1);
+        long id = Math.abs(url.hashCode() + category.name().hashCode());
+        return new Song(id, url, name, artist, category.name().toLowerCase(Locale.ROOT), index + 1);
     }
 }

@@ -1,6 +1,9 @@
 server:
   port: '8050'
 
+parser:
+  songsOnPage:  '50'
+
 spring:
   datasource:
     url: jdbc:h2:mem:default
