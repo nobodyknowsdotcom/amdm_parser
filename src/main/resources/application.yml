@@ -11,4 +11,13 @@ spring:
     password: h2pass
     driverClassName: org.h2.Driver
   jpa:
-    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+    spring:
+      jpa:
+        database-platform: org.hibernate.dialect.H2Dialect
+        properties:
+          hibernate:
+            check_nullability=true
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui-custom.html

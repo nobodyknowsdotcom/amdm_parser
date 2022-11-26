@@ -5,10 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @Repository
 public interface SongsTopicRepository extends CrudRepository<Song, Long> {
-    List<Song> findAllByCategory(String category, Pageable pageable);
-    List<Song> findAllByCategory(String category);
+    ArrayList<Song> findAllByCategory(String category, Pageable pageable);
+    ArrayList<Song> findAllByCategory(String category);
+    void deleteAllByCategory(String category);
 }

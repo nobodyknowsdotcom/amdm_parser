@@ -11,16 +11,16 @@ import javax.persistence.*;
 @Entity(name = "songs")
 public class Song {
     @Id
-    @Column(name = "id", unique = true)
+    @Column(name = "id", unique = true, nullable = false)
     private long id;
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "artist")
+    @Column(name = "artist", nullable = false)
     private String artist;
-    @Column(name = "url")
+    @Column(name = "url", nullable = false)
     private String url;
-    @Column(name = "category")
+    @Column(name = "category", nullable = false)
     private String category;
-    @Column(name = "position")
+    @Column(name = "position", nullable = false)
     private int position;
 }

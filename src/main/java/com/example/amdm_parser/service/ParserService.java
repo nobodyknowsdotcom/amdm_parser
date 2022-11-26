@@ -17,12 +17,15 @@ import java.util.Locale;
 
 @Slf4j
 @Service
-public class AmDmParser {
+public class ParserService {
     @Value("${parser.songsOnPage}")
     private int songsOnPage;
 
+    /*
+    Принимает категорию и отдает список песен со всех страниц каталога
+    */
     public ArrayList<Song> getSongsByCategory(TopicCategories category){
-        ArrayList<Song> songsList = new ArrayList<>();
+        ArrayList<Song> result = new ArrayList<>();
         Document firstPage = getPage(category.getUrl());
 
         int pagesCount = 1;
@@ -36,12 +39,12 @@ public class AmDmParser {
         for (int i = 0; i < pagesCount; i++) {
             Document page = getPage(category.getUrl()+String.format("/page%s", i+1));
             Element songsContainer = getSongsContainer(page);
-            songsList.addAll(getSongsListFromContainer(songsContainer, i, category));
+            result.addAll(getSongsListFromContainer(songsContainer, i, category));
         }
 
-        log.info(String.format("Got %s songs by %s, pages count: %s", songsList.size(),
+        log.info(String.format("Got %s songs by %s, pages count: %s", result.size(),
                 category.getUrl(), pagesCount));
-        return songsList;
+        return result;
     }
 
     /*
