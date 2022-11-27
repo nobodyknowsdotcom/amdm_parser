@@ -1,11 +1,26 @@
 package com.example.amdm_parser.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+import javax.persistence.*;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@Entity(name = "songs")
 public class Song {
-    private final String name;
-    private final String artist;
-    private final String url;
-    private final int position;
+    @Id
+    @Column(name = "id", unique = true, nullable = false)
+    private long id;
+    @Column(name = "name", nullable = false)
+    private String name;
+    @Column(name = "artist", nullable = false)
+    private String artist;
+    @Column(name = "url", nullable = false)
+    private String url;
+    @Column(name = "category", nullable = false)
+    private String category;
+    @Column(name = "position", nullable = false)
+    private int position;
 }
