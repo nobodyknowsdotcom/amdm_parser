@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 @Slf4j
@@ -24,15 +25,10 @@ public class ParserService {
     /*
     Принимает категорию и отдает список песен со всех страниц каталога
     */
-    public ArrayList<Song> getSongsByCategory(TopicCategories category){
+    public List<Song> getSongsByCategory(TopicCategories category){
         ArrayList<Song> result = new ArrayList<>();
         Document firstPage = getPage(category.getUrl());
-
-        int pagesCount = 1;
-        try{
-            pagesCount = getPagesCount(firstPage);
-        }
-        catch (NullPointerException ignored){}
+        int pagesCount = getPagesCount(firstPage);
         /*
         Бежим по всем страницам, парсим их и складываем песни в songList
         */
@@ -63,13 +59,14 @@ public class ParserService {
     }
 
     private int getPagesCount(Document page){
+        int pagesCount = 1;
         try{
             Element pagination = page.select("ul.nav-pages").first();
-            return pagination.select("li").size();
+            pagesCount = pagination.select("li").size();
         }
-        catch (Selector.SelectorParseException e){
-            return 1;
-        }
+        catch (NullPointerException ignored){/*Если блок пагинации не найден, значит в каталоге всего одна страница
+        В таком случае игнорируем NullPointerException и возвращаем 1*/}
+        return pagesCount;
     }
     /*
     * Вытаскивает элемент-родитель, в котором лежит весь список песен
@@ -101,9 +98,10 @@ public class ParserService {
     * Преобразует элемент из родительского элемента с песнями в экземпляр класса Song
     */
     private Song parseElementIntoSong(Element songElement, int index, TopicCategories category){
-        String name = songElement.select("a.artist").get(1).text();
-        String artist = songElement.select("a.artist").get(0).text();
-        String url = songElement.select("a.artist").get(1).attr("href");
+        Elements songElements = songElement.select("a.artist");
+        String name = songElements.get(1).text();
+        String artist = songElements.get(0).text();
+        String url = songElements.get(1).attr("href");
         long id = Math.abs(url.hashCode() + category.name().hashCode());
         return new Song(id, url, name, artist, category.name().toLowerCase(Locale.ROOT), index + 1);
     }

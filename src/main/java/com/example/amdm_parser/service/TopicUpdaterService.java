@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -24,7 +24,7 @@ public class TopicUpdaterService {
     @Transactional
     public void saveAllTopicsToRepository(){
         for (TopicCategories category : TopicCategories.values()){
-            ArrayList<Song> songsTopic = parserService.getSongsByCategory(category);
+            List<Song> songsTopic = parserService.getSongsByCategory(category);
 
 
             if (!songsTopic.isEmpty()){
