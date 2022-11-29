@@ -5,6 +5,7 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'org.springframework.boot' version '2.7.5'
 }
 
 repositories {
@@ -29,7 +30,7 @@ dependencies {
 }
 
 group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 description = 'amdm_parser'
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
@@ -40,6 +41,7 @@ publishing {
         }
     }
 }
+
 
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'

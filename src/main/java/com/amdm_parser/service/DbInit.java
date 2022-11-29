@@ -1,6 +1,6 @@
-package com.example.amdm_parser.service;
+package com.amdm_parser.service;
 
-import com.example.amdm_parser.repository.SongsTopicRepository;
+import com.amdm_parser.repository.SongsTopicRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

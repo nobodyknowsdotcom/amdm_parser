@@ -1,4 +1,4 @@
-package com.example.amdm_parser.utils;
+package com.amdm_parser.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,5 +16,9 @@ public enum TopicCategories {
     @Override
     public String toString(){
         return url;
+    }
+
+    public String getName(){
+        return this.name().toLowerCase();
     }
 }

@@ -1,8 +1,8 @@
-package com.example.amdm_parser.service;
+package com.amdm_parser.service;
 
-import com.example.amdm_parser.dto.Song;
-import com.example.amdm_parser.repository.SongsTopicRepository;
-import com.example.amdm_parser.utils.TopicCategories;
+import com.amdm_parser.dto.Song;
+import com.amdm_parser.repository.SongsTopicRepository;
+import com.amdm_parser.utils.TopicCategories;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;

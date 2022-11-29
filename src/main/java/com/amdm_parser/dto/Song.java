@@ -1,4 +1,4 @@
-package com.example.amdm_parser.dto;
+package com.amdm_parser.dto;
 
 import lombok.*;
 
