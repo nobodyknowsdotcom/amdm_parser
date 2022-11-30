@@ -103,6 +103,6 @@ public class ParserService {
         String artist = songElements.get(0).text();
         String url = songElements.get(1).attr("href");
         long id = Math.abs(url.hashCode() + category.name().hashCode());
-        return new Song(id, url, name, artist, category.name().toLowerCase(Locale.ROOT), index + 1);
+        return new Song(id, name, artist, url, category.name().toLowerCase(Locale.ROOT), index + 1);
     }
 }
