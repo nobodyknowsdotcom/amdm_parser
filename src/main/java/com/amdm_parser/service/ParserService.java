@@ -8,6 +8,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.jsoup.select.Selector;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -18,6 +19,8 @@ import java.util.Locale;
 @Slf4j
 @Service
 public class ParserService {
+    @Value("${parser.songsOnPage}")
+    private int pageSize;
     /*
     Принимает категорию и отдает список песен со всех страниц каталога
     */
@@ -31,7 +34,7 @@ public class ParserService {
         for (int i = 0; i < pagesCount; i++) {
             Document page = getPage(category.getUrl()+String.format("/page%s", i+1));
             Element songsContainer = getSongsContainer(page);
-            result.addAll(getSongsListFromContainer(songsContainer, category));
+            result.addAll(getSongsListFromContainer(songsContainer, category, i));
         }
 
         log.info(String.format("Got %s songs by %s, pages count: %s", result.size(),
@@ -73,19 +76,18 @@ public class ParserService {
     /*
     * Вытаскивает из элемента-родителя весь список песен и возвращает как ArrayList
     */
-    private ArrayList<Song> getSongsListFromContainer(Element parentContainer, TopicCategories category){
+    private ArrayList<Song> getSongsListFromContainer(Element parentContainer, TopicCategories category, int page){
         ArrayList<Song> result = new ArrayList<>();
         Elements songElements = parentContainer.select("td.artist_name");
         /*
         * Создаем отдельный счетчик вне цикла, т.к. при возникновении SelectorParseException
         * будут разрывы в нумерации песен
         */
-        int position = 0;
-        for (Element songElement : songElements) {
+        for (int i = 0; i < songElements.size(); i++) {
+            Element songElement = songElements.get(i);
             try { // Передаем в метод Element (будущий Song), место в списке и категорию
-                Song parsedSong = parseElementIntoSong(songElement, position, category);
+                Song parsedSong = parseElementIntoSong(songElement, (pageSize*page)+i, category);
                 result.add(parsedSong);
-                position += 1;
             } catch (Selector.SelectorParseException e) {
                 log.error("Can't parse song!");
                 e.printStackTrace();
