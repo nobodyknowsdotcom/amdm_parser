@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Создает TopicPage, который содержит лист песен и два флага, обозначающие наличие соседних страниц
+ */
 @Service
 public class PaginationService {
     private final SongsTopicRepository repository;
@@ -19,10 +22,6 @@ public class PaginationService {
     public PaginationService(SongsTopicRepository repository) {
         this.repository = repository;
     }
-    /*
-    Вытаскивает из БД список песен и формирует TopicPage
-    Если переданы некорректные параметры, кидает 502 ошибку.
-     */
     public TopicPage getTopicPage(TopicCategories category, int size, int page, SortCategories sortCategories){
         String categoryName = category.getName();
         Pageable pageQuery = PageRequest.of(page, size, Sort.by(sortCategories.getName()));

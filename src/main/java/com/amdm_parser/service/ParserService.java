@@ -16,76 +16,74 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Скачивает html страницы с топами песен с amdm.ru и парсит в List<Song>
+ */
 @Slf4j
 @Service
 public class ParserService {
     @Value("${parser.songsOnPage}")
     private int pageSize;
-    /*
-    Принимает категорию и отдает список песен со всех страниц каталога
-    */
+
+
     public List<Song> getSongsByCategory(TopicCategories category){
         ArrayList<Song> result = new ArrayList<>();
         Document firstPage = getPage(category.getUrl());
         int pagesCount = getPagesCount(firstPage);
-        /*
-        Бежим по всем страницам, парсим их и складываем песни в songList
-        */
+
         for (int i = 0; i < pagesCount; i++) {
             Document page = getPage(category.getUrl()+String.format("/page%s", i+1));
             Element songsContainer = getSongsContainer(page);
-            result.addAll(getSongsListFromContainer(songsContainer, category, i));
+            if (songsContainer != null){
+                List<Song> songList = getSongsListFromContainer(songsContainer, category, i);
+                result.addAll(songList);
+            }
         }
+        numerateSongs(result);
 
         log.info(String.format("Got %s songs by %s, pages count: %s", result.size(),
                 category.getUrl(), pagesCount));
         return result;
     }
-
-    /*
-    * Скачивает html страницу по указанной ссылке и отдает как Document
-    */
     private Document getPage(String url){
         Document page = new Document(url);
         try {
-            page = Jsoup.connect(url).timeout(2*1000).get();
+            page = Jsoup.connect(url)
+                    .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
+                    .referrer("http://www.google.com")
+                    .timeout(2*1000).get();
             log.info(String.format("Getting %s...", url));
             return page;
         } catch (IOException e) {
             log.error(String.format("Can't get %s", url));
+            e.printStackTrace();
         }
         return page;
     }
-
+    private void numerateSongs(List<Song> songList){
+        for (int i = 0; i<songList.size(); i++){
+            songList.get(i).setPosition(i);
+        }
+    }
     private int getPagesCount(Document page){
         int pagesCount = 1;
         try{
             Element pagination = page.select("ul.nav-pages").first();
             pagesCount = pagination.select("li").size();
         }
-        catch (NullPointerException ignored){/*Если блок пагинации не найден, значит в каталоге всего одна страница
-        В таком случае игнорируем NullPointerException и возвращаем 1*/}
+        catch (NullPointerException ignored){}
         return pagesCount;
     }
-    /*
-    * Вытаскивает элемент-родитель, в котором лежит весь список песен
-    */
     private Element getSongsContainer(Document page){
         return page.select("table.items").first();
     }
-    /*
-    * Вытаскивает из элемента-родителя весь список песен и возвращает как ArrayList
-    */
     private ArrayList<Song> getSongsListFromContainer(Element parentContainer, TopicCategories category, int page){
         ArrayList<Song> result = new ArrayList<>();
         Elements songElements = parentContainer.select("td.artist_name");
-        /*
-        * Создаем отдельный счетчик вне цикла, т.к. при возникновении SelectorParseException
-        * будут разрывы в нумерации песен
-        */
+
         for (int i = 0; i < songElements.size(); i++) {
             Element songElement = songElements.get(i);
-            try { // Передаем в метод Element (будущий Song), место в списке и категорию
+            try {
                 Song parsedSong = parseElementIntoSong(songElement, (pageSize*page)+i, category);
                 result.add(parsedSong);
             } catch (Selector.SelectorParseException e) {
@@ -95,9 +93,6 @@ public class ParserService {
         }
         return result;
     }
-    /*
-    * Преобразует элемент из родительского элемента с песнями в экземпляр класса Song
-    */
     private Song parseElementIntoSong(Element songElement, int index, TopicCategories category){
         Elements songElements = songElement.select("a.artist");
         String name = songElements.get(1).text();

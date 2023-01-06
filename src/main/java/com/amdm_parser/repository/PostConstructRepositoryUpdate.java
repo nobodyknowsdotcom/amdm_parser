@@ -1,6 +1,6 @@
-package com.amdm_parser.service;
+package com.amdm_parser.repository;
 
-import com.amdm_parser.repository.SongsTopicRepository;
+import com.amdm_parser.service.RepositoryRefresherService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -8,11 +8,11 @@ import javax.annotation.PostConstruct;
 
 @Slf4j
 @Service
-public class DbInit {
-    private final TopicUpdaterService updaterService;
+public class PostConstructRepositoryUpdate {
+    private final RepositoryRefresherService updaterService;
     private final SongsTopicRepository repository;
 
-    public DbInit(TopicUpdaterService updaterService, SongsTopicRepository repository) {
+    public PostConstructRepositoryUpdate(RepositoryRefresherService updaterService, SongsTopicRepository repository) {
         this.updaterService = updaterService;
         this.repository = repository;
     }

@@ -10,13 +10,17 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+/**
+ * Обновляет репозиторий с песнями согласно Cron расписанию
+ * Если при попытке обновления от парсера получен пустой список, то категория не будет обновлена.
+ */
 @Slf4j
 @Service
-public class TopicUpdaterService {
+public class RepositoryRefresherService {
     final SongsTopicRepository songsRepository;
     final ParserService parserService;
 
-    public TopicUpdaterService(SongsTopicRepository songsRepository, ParserService parserService) {
+    public RepositoryRefresherService(SongsTopicRepository songsRepository, ParserService parserService) {
         this.songsRepository = songsRepository;
         this.parserService = parserService;
     }

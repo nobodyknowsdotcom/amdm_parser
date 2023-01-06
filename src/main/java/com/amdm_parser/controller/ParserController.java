@@ -11,8 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ParserController {
-    final
-    PaginationService paginationService;
+    final PaginationService paginationService;
 
     public ParserController(PaginationService paginationService) {
         this.paginationService = paginationService;
