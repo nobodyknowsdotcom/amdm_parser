@@ -1,1 +1,0 @@
-Swagger available on http://localhost:8050/swagger-ui-custom.html
