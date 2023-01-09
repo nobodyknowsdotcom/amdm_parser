@@ -62,7 +62,7 @@ public class ParserService {
     }
     private void numerateSongs(List<Song> songList){
         for (int i = 0; i<songList.size(); i++){
-            songList.get(i).setPosition(i);
+            songList.get(i).setPosition(i+1);
         }
     }
     private int getPagesCount(Document page){
