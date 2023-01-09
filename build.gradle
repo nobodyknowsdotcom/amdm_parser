@@ -15,24 +15,20 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.7.5'
     implementation 'org.jsoup:jsoup:1.15.3'
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.13'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.7.5'
-    implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
-    implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+    implementation 'javax.xml.bind:jaxb-api:2.3.1'
     runtimeOnly 'com.h2database:h2:2.1.214'
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
 
-jar {
-    enabled = false
-}
-
 group = 'com.example'
 version = '1.0.0'
 description = 'amdm_parser'
-sourceCompatibility = JavaVersion.VERSION_11
+java.sourceCompatibility = JavaVersion.VERSION_1_8
 
 publishing {
     publications {
@@ -41,6 +37,7 @@ publishing {
         }
     }
 }
+
 
 task buildDocker(type: Exec) {
     dependsOn build
