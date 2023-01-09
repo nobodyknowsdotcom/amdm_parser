@@ -15,20 +15,24 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web:2.7.5'
     implementation 'org.jsoup:jsoup:1.15.3'
-    implementation 'org.springdoc:springdoc-openapi-ui:1.6.13'
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.7.5'
-    implementation 'javax.xml.bind:jaxb-api:2.3.1'
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+    implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
     runtimeOnly 'com.h2database:h2:2.1.214'
 
     compileOnly 'org.projectlombok:lombok:1.18.24'
     annotationProcessor 'org.projectlombok:lombok:1.18.24'
 }
 
+jar {
+    enabled = false
+}
+
 group = 'com.example'
 version = '1.0.0'
 description = 'amdm_parser'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
+sourceCompatibility = JavaVersion.VERSION_11
 
 publishing {
     publications {
@@ -38,28 +42,10 @@ publishing {
     }
 }
 
-task copyDependencies(type: Copy) {
-    from configurations.runtimeClasspath
-    into "$buildDir/lib"
-}
-
-jar {
-    manifest {
-        attributes["Main-Class"] = "bootJarMainClassName"
-        attributes["Class-Path"] = configurations.runtimeClasspath.collect { 'lib/' + it.getName() }.join(' ')
-    }
-}
-
 task buildDocker(type: Exec) {
-    dependsOn copyDependencies, build
+    dependsOn build
     workingDir "$projectDir"
     commandLine 'docker', 'build', '--rm', '.', '-t', "test", "-f", "$projectDir/src/main/docker/Dockerfile"
-}
-
-task runDocker(type: Exec) {
-    dependsOn buildDocker
-    workingDir "$projectDir"
-    commandLine 'docker', 'run', "$project.group/$project.name:$project.version"
 }
 
 tasks.withType(JavaCompile) {

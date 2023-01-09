@@ -1,5 +1,5 @@
 server:
-  port: '50'
+  port: 50
 
 parser:
   songsOnPage: '50'
@@ -18,7 +18,3 @@ spring:
         properties:
           hibernate:
             check_nullability: true
-
-springdoc:
-  swagger-ui:
-    path: /swagger-ui-custom.html

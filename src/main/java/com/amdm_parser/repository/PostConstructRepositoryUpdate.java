@@ -17,7 +17,7 @@ public class PostConstructRepositoryUpdate {
         this.repository = repository;
     }
 
-    @PostConstruct
+   @PostConstruct
     private void initDatabase() {
         if(repository.count() == 0){
             log.info("database is empty, starting parsing topics to database...");
