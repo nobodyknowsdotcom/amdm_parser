@@ -38,11 +38,14 @@ publishing {
     }
 }
 
+jar {
+    enabled = false
+}
 
 task buildDocker(type: Exec) {
     dependsOn build
     workingDir "$projectDir"
-    commandLine 'docker', 'build', '--rm', '.', '-t', "test", "-f", "$projectDir/src/main/docker/Dockerfile"
+    commandLine 'docker', 'build', '--rm', '.', '-t', "amdm-parser", "-f", "$projectDir/src/main/docker/Dockerfile"
 }
 
 tasks.withType(JavaCompile) {

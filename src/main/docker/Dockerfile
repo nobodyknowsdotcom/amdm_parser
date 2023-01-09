@@ -1,28 +1,33 @@
-FROM openjdk:17-alpine AS jre-build
+FROM eclipse-temurin:11-jdk-alpine as corretto-jdk
+
+RUN apk add --no-cache binutils
+
+# собираем свой runtime
+RUN $JAVA_HOME/bin/jlink \
+         --verbose \
+         --add-modules ALL-MODULE-PATH \
+         --strip-debug \
+         --no-man-pages \
+         --no-header-files \
+         --compress=2 \
+         --output /customjre
+
+FROM alpine:latest
+ENV JAVA_HOME=/jre
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+# копируем собраный на предыдущем шаге runtime в текущий образ, чтобы не тащить весь jdk
+COPY --from=corretto-jdk /customjre $JAVA_HOME
+
+ARG APPLICATION_USER=appuser
+RUN adduser --no-create-home -u 1000 -D $APPLICATION_USER
+
+RUN mkdir /app && \
+    chown -R $APPLICATION_USER /app
+
+USER 1000
+COPY --chown=1000:1000 ./build/libs/*.jar /app/app.jar
 WORKDIR /app
 
-# copy the dependencies into the docker image
-COPY build/lib/* build/lib/
-
-# copy the executable jar into the docker image
-COPY build/libs/amdm_parser*.jar build/app.jar
-
-# find JDK dependencies dynamically from jar
-RUN jdeps \
-# dont worry about missing modules
---ignore-missing-deps \
-# suppress any warnings printed to console
--q \
-# java release version targeting
---multi-release 17 \
-# output the dependencies at end of run
---print-module-deps \
-# specify the the dependencies for the jar
---class-path build/lib/* \
-# pipe the result of running jdeps on the app jar to file
-build/app.jar > jre-deps.info
-
 EXPOSE 8050
-
-# temp print jdeps output
-ENTRYPOINT cat /app/jre-deps.info
+ENTRYPOINT [ "/jre/bin/java", "-jar", "/app/app.jar" ]
