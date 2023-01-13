@@ -1,8 +1,8 @@
-FROM eclipse-temurin:11-jdk-alpine as corretto-jdk
+# Вычленяем из jdk java runtime enviroment (jre), чтобы не тащить с собой весь jdk
+FROM eclipse-temurin:11-jdk-alpine as jre-build
 
 RUN apk add --no-cache binutils
-
-# собираем свой runtime
+# Собираем jre
 RUN $JAVA_HOME/bin/jlink \
          --verbose \
          --add-modules ALL-MODULE-PATH \
@@ -12,21 +12,14 @@ RUN $JAVA_HOME/bin/jlink \
          --compress=2 \
          --output /customjre
 
+# Упакуем собранный jar и jre в супер легкий alpine linux и запустим приложение
 FROM alpine:latest
 ENV JAVA_HOME=/jre
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
-# копируем собраный на предыдущем шаге runtime в текущий образ, чтобы не тащить весь jdk
-COPY --from=corretto-jdk /customjre $JAVA_HOME
-
-ARG APPLICATION_USER=appuser
-RUN adduser --no-create-home -u 1000 -D $APPLICATION_USER
-
-RUN mkdir /app && \
-    chown -R $APPLICATION_USER /app
-
-USER 1000
-COPY --chown=1000:1000 ./build/libs/*.jar /app/app.jar
+# Копируем JRE из jre-build
+COPY --from=jre-build /customjre $JAVA_HOME
+COPY build/libs/*.jar /app/app.jar
 WORKDIR /app
 
 EXPOSE 8050
