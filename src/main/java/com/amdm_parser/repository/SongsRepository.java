@@ -8,8 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 
 @Repository
-public interface SongsTopicRepository extends CrudRepository<Song, Long> {
+public interface SongsRepository extends CrudRepository<Song, Long> {
     ArrayList<Song> findAllByCategory(String category, Pageable pageable);
     ArrayList<Song> findAllByCategory(String category);
+
+    Integer countByCategory(String category);
     void deleteAllByCategory(String category);
 }

@@ -2,7 +2,7 @@ package com.amdm_parser.service;
 
 import com.amdm_parser.dto.Song;
 import com.amdm_parser.dto.TopicPage;
-import com.amdm_parser.repository.SongsTopicRepository;
+import com.amdm_parser.repository.SongsRepository;
 import com.amdm_parser.utils.SortCategories;
 import com.amdm_parser.utils.TopicCategories;
 import org.springframework.data.domain.PageRequest;
@@ -17,9 +17,9 @@ import java.util.List;
  */
 @Service
 public class PaginationService {
-    private final SongsTopicRepository repository;
+    private final SongsRepository repository;
 
-    public PaginationService(SongsTopicRepository repository) {
+    public PaginationService(SongsRepository repository) {
         this.repository = repository;
     }
     public TopicPage getTopicPage(TopicCategories category, int size, int page, SortCategories sortCategories){
