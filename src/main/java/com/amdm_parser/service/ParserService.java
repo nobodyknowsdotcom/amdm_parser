@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Скачивает html страницы с топами песен с amdm.ru и парсит в List<Song>
+ * Получает список песен из заданной категории путем парсинга amdm.ru
  */
 @Slf4j
 @Service

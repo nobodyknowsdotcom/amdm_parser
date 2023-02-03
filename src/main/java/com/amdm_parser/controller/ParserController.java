@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Контроллер, который обрабатывает запросы на данные с разбивкой на страницы и метрики репозитория.
+ */
 @RestController
 @Slf4j
 public class ParserController {
@@ -31,7 +34,7 @@ public class ParserController {
     }
 
     @GetMapping(value = "/metrics")
-    public RepositoryMetrics getRepositorySize(){
+    public RepositoryMetrics getRepositoryMetrics(){
         log.info("Processing repository metrics request...");
         return repositoryMetricsService.getRepositoryMetrics();
     }
