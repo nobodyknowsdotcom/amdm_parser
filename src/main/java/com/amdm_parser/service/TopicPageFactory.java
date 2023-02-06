@@ -2,7 +2,7 @@ package com.amdm_parser.service;
 
 import com.amdm_parser.dto.Song;
 import com.amdm_parser.dto.TopicPage;
-import com.amdm_parser.repository.SongsTopicRepository;
+import com.amdm_parser.repository.SongsRepository;
 import com.amdm_parser.utils.SortCategories;
 import com.amdm_parser.utils.TopicCategories;
 import org.springframework.data.domain.PageRequest;
@@ -13,13 +13,14 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Создает TopicPage, который содержит лист песен и два флага, обозначающие наличие соседних страниц
+ * Принимает категорию, размер страницы, номер страницы и категорию сортировки и возвращает объект TopicPage, содержащий
+ * список песен, и логическое значение, указывающее, есть ли следующая страница.
  */
 @Service
-public class TopicPageFactory {
-    private final SongsTopicRepository repository;
+public class PaginationService {
+    private final SongsRepository repository;
 
-    public TopicPageFactory(SongsTopicRepository repository) {
+    public PaginationService(SongsRepository repository) {
         this.repository = repository;
     }
     public TopicPage getTopicPage(TopicCategories category, int size, int page, SortCategories sortCategories){

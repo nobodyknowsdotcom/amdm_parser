@@ -1,31 +1,28 @@
 package com.amdm_parser.service;
 
 import com.amdm_parser.dto.Song;
-import com.amdm_parser.repository.SongsTopicRepository;
+import com.amdm_parser.repository.SongsRepository;
 import com.amdm_parser.utils.TopicCategories;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
- * Обновляет репозиторий с песнями согласно Cron расписанию
- * Если при попытке обновления от парсера получен пустой список, то категория не будет обновлена.
+ * Запланированная служба, которая сохраняет все песни из всех категорий в базу данных.
  */
 @Slf4j
 @Service
 public class RepositoryRefresherService {
-    final SongsTopicRepository songsRepository;
+    final SongsRepository songsRepository;
     final ParserService parserService;
 
-    public RepositoryRefresherService(SongsTopicRepository songsRepository, ParserService parserService) {
+    public RepositoryRefresherService(SongsRepository songsRepository, ParserService parserService) {
         this.songsRepository = songsRepository;
         this.parserService = parserService;
     }
     @Scheduled(cron = "${parser.schedulerConfig}", zone = "GMT+5")
-    @Transactional
     public void saveAllTopicsToRepository(){
         for (TopicCategories category : TopicCategories.values()){
             List<Song> songsTopic = parserService.getSongsByCategory(category);
