@@ -73,7 +73,6 @@ public class ParserService {
         }
         catch (NullPointerException ignored){
             log.error("Error processing pages count");
-            ignored.printStackTrace();
         }
         return pagesCount;
     }
