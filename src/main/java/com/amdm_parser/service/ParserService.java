@@ -27,7 +27,7 @@ public class ParserService {
 
 
     public List<Song> getSongsByCategory(TopicCategories category){
-        ArrayList<Song> result = new ArrayList<>();
+        ArrayList<Song> songs = new ArrayList<>();
         Document firstPage = getPage(category.getUrl());
         int pagesCount = getPagesCount(firstPage);
 
@@ -36,14 +36,14 @@ public class ParserService {
             Element songsContainer = getSongsContainer(page);
             if (songsContainer != null){
                 List<Song> songList = getSongsListFromContainer(songsContainer, category, i);
-                result.addAll(songList);
+                songs.addAll(songList);
             }
         }
-        numerateSongs(result);
+        numerateSongs(songs);
 
-        log.info(String.format("Got %s songs by %s, pages count: %s", result.size(),
+        log.info(String.format("Got %s songs by %s, pages count: %s", songs.size(),
                 category.getUrl(), pagesCount));
-        return result;
+        return songs;
     }
     private Document getPage(String url){
         Document page = new Document(url);
@@ -71,7 +71,10 @@ public class ParserService {
             Element pagination = page.select("ul.nav-pages").first();
             pagesCount = pagination.select("li").size();
         }
-        catch (NullPointerException ignored){}
+        catch (NullPointerException ignored){
+            log.error("Error processing pages count");
+            ignored.printStackTrace();
+        }
         return pagesCount;
     }
     private Element getSongsContainer(Document page){

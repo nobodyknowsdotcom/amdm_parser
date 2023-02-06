@@ -9,11 +9,11 @@ import javax.annotation.PostConstruct;
 @Slf4j
 @Service
 public class PostConstructRepositoryUpdate {
-    private final RepositoryRefresherService updaterService;
+    private final RepositoryRefresherService repositoryRefresherService;
     private final SongsTopicRepository repository;
 
-    public PostConstructRepositoryUpdate(RepositoryRefresherService updaterService, SongsTopicRepository repository) {
-        this.updaterService = updaterService;
+    public PostConstructRepositoryUpdate(RepositoryRefresherService repositoryRefresherService, SongsTopicRepository repository) {
+        this.repositoryRefresherService = repositoryRefresherService;
         this.repository = repository;
     }
 
@@ -21,7 +21,7 @@ public class PostConstructRepositoryUpdate {
     private void initDatabase() {
         if(repository.count() == 0){
             log.info("database is empty, starting parsing topics to database...");
-            updaterService.saveAllTopicsToRepository();
+            repositoryRefresherService.saveAllTopicsToRepository();
             log.info(String.format("parsed topics successfully, database size is %s", repository.count()));
         }
     }

@@ -16,10 +16,10 @@ import java.util.List;
  * Создает TopicPage, который содержит лист песен и два флага, обозначающие наличие соседних страниц
  */
 @Service
-public class PaginationService {
+public class TopicPageFactory {
     private final SongsTopicRepository repository;
 
-    public PaginationService(SongsTopicRepository repository) {
+    public TopicPageFactory(SongsTopicRepository repository) {
         this.repository = repository;
     }
     public TopicPage getTopicPage(TopicCategories category, int size, int page, SortCategories sortCategories){
