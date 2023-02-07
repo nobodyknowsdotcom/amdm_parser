@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.beans.Transient;
 import java.util.List;
 
 /**
@@ -23,18 +25,25 @@ public class RepositoryRefresherService {
         this.parserService = parserService;
     }
     @Scheduled(cron = "${parser.schedulerConfig}", zone = "GMT+5")
+    @Transactional
     public void saveAllTopicsToRepository(){
         for (TopicCategories category : TopicCategories.values()){
             List<Song> songsTopic = parserService.getSongsByCategory(category);
 
-
             if (!songsTopic.isEmpty()){
-                songsRepository.deleteAllByCategory(category.name().toLowerCase());
+                try{
+                    songsRepository.deleteAllByCategory(category.name().toLowerCase());
+                    log.info(String.format("Purged %s category", category.name()));
+                } catch (Exception e){
+                    log.error(String.format("Cannot delete %s category", category.name()));
+                    e.printStackTrace();
+                }
                 try{
                     songsRepository.saveAll(songsTopic);
+                    log.info(String.format("Saved %s category, category count: %s", category.name(), songsTopic.size()));
                 }
                 catch (Exception e){
-                    log.error(String.format("can't save %s category", category.name().toLowerCase()));
+                    log.error(String.format("Cannot save %s category", category.name().toLowerCase()));
                     e.printStackTrace();
                 }
             }

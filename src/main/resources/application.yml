@@ -3,9 +3,11 @@ server:
 
 parser:
   songsOnPage: '50'
-  schedulerConfig: 30 0 2,12 * * *
+  schedulerConfig: 0 */2 * * * *
 
 spring:
+  h2:
+    console.enabled: true
   datasource:
     url: jdbc:h2:mem:default
     username: h2user
