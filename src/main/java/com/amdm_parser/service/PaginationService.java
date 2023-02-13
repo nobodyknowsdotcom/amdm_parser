@@ -19,6 +19,6 @@ public class PaginationService {
 
         String categoryName = category.getName();
         Page<Song> songPage = repository.findAllByCategory(categoryName, pageable);
-        return new TopicPage(songPage.getContent(), songPage.hasPrevious(), songPage.hasPrevious());
+        return new TopicPage(songPage.getContent(), songPage.isLast(), songPage.isFirst());
     }
 }
